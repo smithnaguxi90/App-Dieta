@@ -8,7 +8,7 @@
     />
     <title>Proteínas e Carboidratos para Recomposição Corporal</title>
 
-    <!-- Ícone (Favicon e Apple Touch Icon gerados via código SVG) -->
+    <!-- Ícone -->
     <link
       rel="icon"
       type="image/svg+xml"
@@ -24,7 +24,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts (Poppins & Inter) -->
+    <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
       rel="stylesheet"
@@ -70,8 +70,6 @@
         background-color: #f8fafc;
         -webkit-tap-highlight-color: transparent;
       }
-
-      /* Scrollbar Hide */
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
@@ -79,8 +77,6 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
-
-      /* Custom Checkbox Animation */
       .checkbox-bounce {
         animation: bounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
@@ -95,22 +91,16 @@
           transform: scale(1);
         }
       }
-
-      /* Glass Effect */
       .glass-card {
         background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.5);
       }
-
-      /* Water Animation */
       .liquid-bg {
         background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
         transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       }
-
-      /* Progress Circle Animation */
       .progress-ring__circle {
         transition: stroke-dashoffset 0.5s ease-in-out, stroke 0.3s;
         transform: rotate(-90deg);
@@ -134,16 +124,18 @@
           </p>
           <h1 class="text-xl font-display font-bold text-slate-800">Hoje</h1>
         </div>
+        <!-- Auth Status Indicator -->
         <div
-          class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold shadow-sm"
+          id="auth-status"
+          class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold shadow-sm transition-colors duration-500"
         >
-          JS
+          <i class="fas fa-sync fa-spin text-xs"></i>
         </div>
       </div>
     </div>
 
     <main class="max-w-md mx-auto px-5 mt-24 space-y-6">
-      <!-- Dashboard Macros (Grid Layout) -->
+      <!-- Dashboard Macros -->
       <section class="grid grid-cols-3 gap-3">
         <!-- PROTEÍNA -->
         <div
@@ -162,7 +154,6 @@
               cx="50"
               cy="50"
             />
-            <!-- Dasharray 263.8 é a circunferência completa -->
             <circle
               id="ring-p"
               class="text-brand-500 progress-ring__circle"
@@ -300,7 +291,7 @@
         </div>
       </section>
 
-      <!-- Water Tracker (Interactive) -->
+      <!-- Water Tracker -->
       <section
         class="bg-white rounded-3xl shadow-soft p-1 overflow-hidden relative"
       >
@@ -322,7 +313,6 @@
             </div>
           </div>
 
-          <!-- Visual Bar -->
           <div
             class="h-6 w-full bg-slate-100 rounded-full overflow-hidden mb-5 relative shadow-inner-light"
           >
@@ -336,29 +326,28 @@
             </div>
           </div>
 
-          <!-- Controls -->
           <div class="grid grid-cols-4 gap-2">
             <button
-              onclick="addWater(250)"
-              class="col-span-1 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-sm hover:bg-blue-100 active:scale-95 transition flex flex-col items-center gap-1"
+              id="btn-water-250"
+              class="col-span-1 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-sm hover:bg-blue-100 active:scale-95 transition flex flex-col items-center gap-1 opacity-50 cursor-not-allowed"
             >
               <i class="fas fa-glass-water text-xs"></i> 250
             </button>
             <button
-              onclick="addWater(500)"
-              class="col-span-1 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-sm hover:bg-blue-100 active:scale-95 transition flex flex-col items-center gap-1"
+              id="btn-water-500"
+              class="col-span-1 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-sm hover:bg-blue-100 active:scale-95 transition flex flex-col items-center gap-1 opacity-50 cursor-not-allowed"
             >
               <i class="fas fa-bottle-water text-xs"></i> 500
             </button>
             <button
-              onclick="addWater(1000)"
-              class="col-span-1 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-sm hover:bg-blue-100 active:scale-95 transition flex flex-col items-center gap-1"
+              id="btn-water-1000"
+              class="col-span-1 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-sm hover:bg-blue-100 active:scale-95 transition flex flex-col items-center gap-1 opacity-50 cursor-not-allowed"
             >
               <i class="fas fa-jug-detergent text-xs"></i> 1L
             </button>
             <button
-              onclick="resetWater()"
-              class="col-span-1 py-3 rounded-xl bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 transition active:scale-95"
+              id="btn-water-reset"
+              class="col-span-1 py-3 rounded-xl bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 transition active:scale-95 opacity-50 cursor-not-allowed"
             >
               <i class="fas fa-rotate-left"></i>
             </button>
@@ -366,7 +355,7 @@
         </div>
       </section>
 
-      <!-- Refeições (Timeline) -->
+      <!-- Refeições -->
       <section>
         <div class="flex items-center justify-between mb-4">
           <h2 class="font-display font-bold text-slate-800 text-lg">
@@ -380,19 +369,45 @@
         </div>
 
         <div id="meals-container" class="space-y-4">
-          <!-- Injetado via JS -->
+          <!-- Carregando Skeleton -->
+          <div
+            class="animate-pulse flex space-x-4 p-5 bg-white rounded-2xl shadow-sm"
+          >
+            <div class="rounded-full bg-slate-200 h-10 w-10"></div>
+            <div class="flex-1 space-y-4 py-1">
+              <div class="h-4 bg-slate-200 rounded w-3/4"></div>
+              <div class="space-y-2">
+                <div class="h-4 bg-slate-200 rounded"></div>
+                <div class="h-4 bg-slate-200 rounded w-5/6"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>
 
-    <script>
-      // --- DADOS E ESTADO ---
-      const todayKey = new Date().toDateString();
+    <!-- FIREBASE MODULE -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getAuth,
+        signInWithCustomToken,
+        signInAnonymously,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        onSnapshot,
+        setDoc,
+        getDoc,
+        collection,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-      // Metas Totais
+      // --- CONSTANTES DE DADOS ---
       const TOTAL_MACROS = { p: 175, c: 215, f: 75 };
+      const GOAL_WATER = 4000;
 
-      // Cardápio com valores aproximados de macros por refeição para bater a meta
       const mealsData = [
         {
           id: 1,
@@ -402,7 +417,7 @@
           icon: "fa-mug-hot",
           color: "text-amber-500",
           bg: "bg-amber-50",
-          macros: { p: 32, c: 45, f: 22 }, // Estimativa
+          macros: { p: 32, c: 45, f: 22 },
           items: [
             "150g Cuscuz de Milho",
             "4 Ovos Mexidos",
@@ -417,7 +432,7 @@
           icon: "fa-bowl-food",
           color: "text-emerald-500",
           bg: "bg-emerald-50",
-          macros: { p: 48, c: 60, f: 18 }, // Estimativa (inclui azeite)
+          macros: { p: 48, c: 60, f: 18 },
           items: [
             "150g Frango/Patinho",
             "150g Arroz",
@@ -433,7 +448,7 @@
           icon: "fa-bolt",
           color: "text-yellow-500",
           bg: "bg-yellow-50",
-          macros: { p: 25, c: 50, f: 15 }, // Estimativa (ovos + pão + fruta)
+          macros: { p: 25, c: 50, f: 15 },
           items: [
             "2 fatias Pão Integral",
             "2 Ovos ou 80g Frango",
@@ -448,7 +463,7 @@
           icon: "fa-glass-water",
           color: "text-blue-500",
           bg: "bg-blue-50",
-          macros: { p: 25, c: 25, f: 1 }, // Whey + Banana
+          macros: { p: 25, c: 25, f: 1 },
           items: ["30g Whey Protein", "250ml Água Gelada", "1 Banana"],
         },
         {
@@ -459,7 +474,7 @@
           icon: "fa-moon",
           color: "text-indigo-500",
           bg: "bg-indigo-50",
-          macros: { p: 45, c: 35, f: 19 }, // Peixe/Frango + Batata + Azeite
+          macros: { p: 45, c: 35, f: 19 },
           items: [
             "150g Peixe/Frango",
             "200g Batata/Mandioca",
@@ -469,73 +484,172 @@
         },
       ];
 
-      // --- INICIALIZAÇÃO ---
-      document.addEventListener("DOMContentLoaded", () => {
-        renderDate();
-        loadState();
-        renderMeals();
-        updateWaterUI();
-        updateMacrosUI(); // Inicia cálculo de macros
-      });
+      // --- FIREBASE SETUP ---
+      const firebaseConfig = JSON.parse(__firebase_config);
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const appId =
+        typeof __app_id !== "undefined" ? __app_id : "default-app-id";
 
-      // --- LÓGICA DE DATA ---
-      function renderDate() {
-        const options = { weekday: "long", day: "numeric", month: "long" };
-        const dateStr = new Date().toLocaleDateString("pt-BR", options);
-        document.getElementById("current-date").innerText = dateStr;
-      }
+      let currentUser = null;
+      let todayKey = ""; // Será setado no init
 
-      // --- LÓGICA DE ESTADO (Local Storage) ---
+      // Estado local (sincronizado com DB)
       let appState = {
         water: 0,
         checkedMeals: [],
-        date: todayKey,
+        date: "",
       };
 
-      function loadState() {
-        const saved = localStorage.getItem("dietaProState");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed.date === todayKey) {
-            appState = parsed;
+      // --- INICIALIZAÇÃO ---
+      async function init() {
+        renderDate();
+
+        // Autenticação
+        try {
+          if (
+            typeof __initial_auth_token !== "undefined" &&
+            __initial_auth_token
+          ) {
+            await signInWithCustomToken(auth, __initial_auth_token);
           } else {
-            appState.date = todayKey;
-            appState.water = 0;
-            appState.checkedMeals = [];
-            saveState();
+            await signInAnonymously(auth);
           }
+        } catch (error) {
+          console.error("Auth Error:", error);
+        }
+
+        // Observar estado da auth
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            currentUser = user;
+            updateAuthStatus("connected");
+            subscribeToData();
+          } else {
+            updateAuthStatus("disconnected");
+          }
+        });
+
+        // Configurar botões (agora que o module carregou)
+        setupButtons();
+      }
+
+      function updateAuthStatus(status) {
+        const indicator = document.getElementById("auth-status");
+        if (status === "connected") {
+          indicator.innerHTML = '<i class="fas fa-cloud text-xs"></i>';
+          indicator.classList.remove("bg-slate-100", "text-slate-400");
+          indicator.classList.add("bg-emerald-100", "text-emerald-600");
+        } else {
+          indicator.innerHTML = '<i class="fas fa-wifi-slash text-xs"></i>';
+          indicator.classList.add("bg-slate-100", "text-slate-400");
+          indicator.classList.remove("bg-emerald-100", "text-emerald-600");
         }
       }
 
-      function saveState() {
-        localStorage.setItem("dietaProState", JSON.stringify(appState));
+      // --- DATA LAYER (FIRESTORE) ---
+      function subscribeToData() {
+        if (!currentUser) return;
+
+        // Caminho: artifacts/{appId}/users/{uid}/daily_stats/{todayKey}
+        const docRef = doc(
+          db,
+          "artifacts",
+          appId,
+          "users",
+          currentUser.uid,
+          "daily_stats",
+          todayKey
+        );
+
+        // Listener em tempo real
+        onSnapshot(
+          docRef,
+          (docSnap) => {
+            enableControls();
+
+            if (docSnap.exists()) {
+              appState = docSnap.data();
+            } else {
+              // Documento não existe (dia novo ou primeiro acesso)
+              appState = {
+                water: 0,
+                checkedMeals: [],
+                date: todayKey,
+              };
+              // Cria o documento inicial no DB
+              saveData();
+            }
+
+            // Atualiza toda a UI com os novos dados
+            updateWaterUI();
+            renderMeals();
+            updateMacrosUI();
+          },
+          (error) => {
+            console.error("Erro ao sincronizar dados:", error);
+          }
+        );
       }
 
-      // --- LÓGICA DE ÁGUA ---
-      const GOAL_WATER = 4000;
+      async function saveData() {
+        if (!currentUser) return;
+        const docRef = doc(
+          db,
+          "artifacts",
+          appId,
+          "users",
+          currentUser.uid,
+          "daily_stats",
+          todayKey
+        );
 
-      function addWater(amount) {
-        appState.water += amount;
-        if (appState.water > GOAL_WATER + 1000)
-          appState.water = GOAL_WATER + 1000;
-        saveState();
-        updateWaterUI();
+        // Usando setDoc com merge para segurança, mas sobrescrevendo estado local
+        await setDoc(docRef, appState, { merge: true });
+      }
 
-        if (
-          appState.water >= GOAL_WATER &&
-          appState.water - amount < GOAL_WATER
-        ) {
-          triggerConfetti();
+      // --- LÓGICA DE UI ---
+      function renderDate() {
+        const options = { weekday: "long", day: "numeric", month: "long" };
+        const dateObj = new Date();
+        const dateStr = dateObj.toLocaleDateString("pt-BR", options);
+        document.getElementById("current-date").innerText = dateStr;
+
+        // Key para o DB (ex: "Tue Oct 27 2023" - sem acentos, simples)
+        todayKey = dateObj.toDateString();
+      }
+
+      function enableControls() {
+        // Habilita botões que começam desabilitados
+        const buttons = document.querySelectorAll("button");
+        buttons.forEach((btn) => {
+          btn.classList.remove("opacity-50", "cursor-not-allowed");
+          btn.disabled = false;
+        });
+      }
+
+      // --- ACTIONS (ÁGUA) ---
+      window.handleWater = (amount) => {
+        if (amount === 0) {
+          if (confirm("Zerar contador de água?")) {
+            appState.water = 0;
+            saveData();
+          }
+        } else {
+          appState.water += amount;
+          if (appState.water > GOAL_WATER + 1000)
+            appState.water = GOAL_WATER + 1000;
+
+          if (
+            appState.water >= GOAL_WATER &&
+            appState.water - amount < GOAL_WATER
+          ) {
+            triggerConfetti();
+          }
+          saveData();
         }
-      }
-
-      function resetWater() {
-        if (confirm("Zerar contador de água?")) {
-          appState.water = 0;
-          saveState();
-          updateWaterUI();
-        }
-      }
+      };
 
       function updateWaterUI() {
         const display = document.getElementById("water-display");
@@ -556,114 +670,27 @@
         }
       }
 
-      // --- LÓGICA DE MACROS (NOVA) ---
-      function updateMacrosUI() {
-        // 1. Calcular o que já foi consumido
-        let consumed = { p: 0, c: 0, f: 0 };
-
-        appState.checkedMeals.forEach((mealId) => {
-          const meal = mealsData.find((m) => m.id === mealId);
-          if (meal) {
-            consumed.p += meal.macros.p;
-            consumed.c += meal.macros.c;
-            consumed.f += meal.macros.f;
-          }
-        });
-
-        // 2. Calcular restante
-        const remaining = {
-          p: TOTAL_MACROS.p - consumed.p,
-          c: TOTAL_MACROS.c - consumed.c,
-          f: TOTAL_MACROS.f - consumed.f,
-        };
-
-        // 3. Atualizar UI (Helper function)
-        updateSingleMacro("p", remaining.p, TOTAL_MACROS.p);
-        updateSingleMacro("c", remaining.c, TOTAL_MACROS.c);
-        updateSingleMacro("f", remaining.f, TOTAL_MACROS.f);
-      }
-
-      function updateSingleMacro(type, remainingVal, totalVal) {
-        // Elementos DOM
-        const elVal = document.getElementById(`val-${type}`);
-        const elLabel = document.getElementById(`label-${type}`);
-        const elRing = document.getElementById(`ring-${type}`);
-        const elIcon = document.getElementById(`icon-${type}`);
-
-        // Valor atual (não deixar negativo visualmente, mostrar 0)
-        const displayVal = remainingVal <= 0 ? 0 : remainingVal;
-        elVal.innerText = `${displayVal}g`;
-
-        // Lógica de "Meta Batida"
-        if (remainingVal <= 0) {
-          // Estado Concluído
-          elLabel.innerText = "CONCLUÍDO!";
-          elLabel.className =
-            "text-[10px] font-bold text-emerald-600 uppercase";
-          elVal.className = "block text-sm font-bold text-emerald-600";
-
-          // Anel completo verde
-          elRing.style.strokeDashoffset = "0";
-          elRing.classList.remove(
-            "text-brand-500",
-            "text-amber-400",
-            "text-blue-400"
+      // --- ACTIONS (REFEIÇÕES) ---
+      window.toggleMeal = (id) => {
+        if (appState.checkedMeals.includes(id)) {
+          appState.checkedMeals = appState.checkedMeals.filter(
+            (mid) => mid !== id
           );
-          elRing.classList.add("text-emerald-500");
-
-          // Ícone verde
-          elIcon.classList.remove(
-            "text-brand-600",
-            "text-amber-500",
-            "text-blue-500"
-          );
-          elIcon.classList.add("text-emerald-600");
         } else {
-          // Estado Pendente
-          elLabel.innerText = "RESTANTE";
-          elLabel.className =
-            "text-[10px] text-slate-400 font-semibold uppercase";
-          elVal.className = "block text-sm font-bold text-slate-700";
+          appState.checkedMeals.push(id);
+          if (navigator.vibrate) navigator.vibrate(50);
 
-          // Calcular progresso do anel (inverso, começa cheio e esvazia)
-          // Se circumference = 263.8
-          // % Restante = remaining / total
-          const circumference = 263.8;
-          const percentRemaining = remainingVal / totalVal;
-          // Offset cresce para esconder a linha. 0 = cheio, 263.8 = vazio.
-          // Mas queremos mostrar o quanto FALTA? Não, usualmente mostra o quanto FEZ.
-          // O usuário pediu "subtrair". Então vamos fazer o anel diminuir.
-          // Começa cheio (100% restante). Offset 0.
-          // Termina vazio? Ou termina cheio verde?
-          // Vamos fazer: O anel representa o que JÁ FOI CONSUMIDO.
-          // Assim ele enche até completar. Faz mais sentido visualmente.
-
-          const percentConsumed = 1 - percentRemaining;
-          const offset = circumference - percentConsumed * circumference;
-
-          elRing.style.strokeDashoffset = offset;
-
-          // Resetar cores originais se tiver desmarcado algo
-          if (type === "p") {
-            elRing.classList.remove("text-emerald-500");
-            elRing.classList.add("text-brand-500");
-            elIcon.classList.remove("text-emerald-600");
-            elIcon.classList.add("text-brand-600");
-          } else if (type === "c") {
-            elRing.classList.remove("text-emerald-500");
-            elRing.classList.add("text-amber-400");
-            elIcon.classList.remove("text-emerald-600");
-            elIcon.classList.add("text-amber-500");
-          } else if (type === "f") {
-            elRing.classList.remove("text-emerald-500");
-            elRing.classList.add("text-blue-400");
-            elIcon.classList.remove("text-emerald-600");
-            elIcon.classList.add("text-blue-500");
+          if (appState.checkedMeals.length === mealsData.length) {
+            triggerConfetti();
           }
         }
-      }
+        saveData();
+        // A UI atualiza automaticamente pelo onSnapshot,
+        // mas podemos forçar para resposta instantânea
+        // renderMeals();
+        // updateMacrosUI();
+      };
 
-      // --- LÓGICA DE REFEIÇÕES ---
       function renderMeals() {
         const container = document.getElementById("meals-container");
         container.innerHTML = "";
@@ -682,7 +709,6 @@
                     <div class="relative overflow-hidden rounded-2xl border border-slate-100 shadow-soft transition-all duration-300 ${opacityClass} ${bgClass}">
                         <label class="block p-5 cursor-pointer relative z-10">
                             <div class="flex items-start gap-4">
-                                <!-- Checkbox Customizado -->
                                 <div class="relative pt-1">
                                     <input type="checkbox" class="peer sr-only" 
                                         onchange="toggleMeal(${meal.id})" 
@@ -728,7 +754,6 @@
                                           .join("")}
                                     </div>
                                     
-                                    <!-- Mini Macro Info -->
                                     <div class="mt-3 pt-3 border-t border-slate-100 flex gap-3 text-[10px] text-slate-400 uppercase font-bold">
                                         <span>P: ${meal.macros.p}g</span>
                                         <span>C: ${meal.macros.c}g</span>
@@ -745,32 +770,94 @@
         document.getElementById("completed-meals").innerText = completedCount;
       }
 
-      function toggleMeal(id) {
-        if (appState.checkedMeals.includes(id)) {
-          appState.checkedMeals = appState.checkedMeals.filter(
-            (mid) => mid !== id
-          );
-        } else {
-          appState.checkedMeals.push(id);
-          if (navigator.vibrate) navigator.vibrate(50);
+      // --- MACROS ---
+      function updateMacrosUI() {
+        let consumed = { p: 0, c: 0, f: 0 };
 
-          // Check if all meals done for confetti? Or simplify
-          if (appState.checkedMeals.length === mealsData.length) {
-            triggerConfetti();
+        appState.checkedMeals.forEach((mealId) => {
+          const meal = mealsData.find((m) => m.id === mealId);
+          if (meal) {
+            consumed.p += meal.macros.p;
+            consumed.c += meal.macros.c;
+            consumed.f += meal.macros.f;
           }
-        }
-        saveState();
-        renderMeals();
-        updateMacrosUI(); // Atualiza os números
-      }
+        });
 
-      // --- UTILS ---
-      function triggerConfetti() {
-        var count = 200;
-        var defaults = {
-          origin: { y: 0.7 },
+        const remaining = {
+          p: TOTAL_MACROS.p - consumed.p,
+          c: TOTAL_MACROS.c - consumed.c,
+          f: TOTAL_MACROS.f - consumed.f,
         };
 
+        updateSingleMacro("p", remaining.p, TOTAL_MACROS.p);
+        updateSingleMacro("c", remaining.c, TOTAL_MACROS.c);
+        updateSingleMacro("f", remaining.f, TOTAL_MACROS.f);
+      }
+
+      function updateSingleMacro(type, remainingVal, totalVal) {
+        const elVal = document.getElementById(`val-${type}`);
+        const elLabel = document.getElementById(`label-${type}`);
+        const elRing = document.getElementById(`ring-${type}`);
+        const elIcon = document.getElementById(`icon-${type}`);
+
+        const displayVal = remainingVal <= 0 ? 0 : remainingVal;
+        elVal.innerText = `${displayVal}g`;
+
+        if (remainingVal <= 0) {
+          elLabel.innerText = "CONCLUÍDO!";
+          elLabel.className =
+            "text-[10px] font-bold text-emerald-600 uppercase";
+          elVal.className = "block text-sm font-bold text-emerald-600";
+
+          elRing.style.strokeDashoffset = "0";
+          elRing.classList.remove(
+            "text-brand-500",
+            "text-amber-400",
+            "text-blue-400"
+          );
+          elRing.classList.add("text-emerald-500");
+
+          elIcon.classList.remove(
+            "text-brand-600",
+            "text-amber-500",
+            "text-blue-500"
+          );
+          elIcon.classList.add("text-emerald-600");
+        } else {
+          elLabel.innerText = "RESTANTE";
+          elLabel.className =
+            "text-[10px] text-slate-400 font-semibold uppercase";
+          elVal.className = "block text-sm font-bold text-slate-700";
+
+          const circumference = 263.8;
+          const percentRemaining = remainingVal / totalVal;
+          const percentConsumed = 1 - percentRemaining;
+          const offset = circumference - percentConsumed * circumference;
+
+          elRing.style.strokeDashoffset = offset;
+
+          if (type === "p") {
+            elRing.classList.remove("text-emerald-500");
+            elRing.classList.add("text-brand-500");
+            elIcon.classList.remove("text-emerald-600");
+            elIcon.classList.add("text-brand-600");
+          } else if (type === "c") {
+            elRing.classList.remove("text-emerald-500");
+            elRing.classList.add("text-amber-400");
+            elIcon.classList.remove("text-emerald-600");
+            elIcon.classList.add("text-amber-500");
+          } else if (type === "f") {
+            elRing.classList.remove("text-emerald-500");
+            elRing.classList.add("text-blue-400");
+            elIcon.classList.remove("text-emerald-600");
+            elIcon.classList.add("text-blue-500");
+          }
+        }
+      }
+
+      function triggerConfetti() {
+        var count = 200;
+        var defaults = { origin: { y: 0.7 } };
         function fire(particleRatio, opts) {
           confetti(
             Object.assign({}, defaults, opts, {
@@ -778,13 +865,25 @@
             })
           );
         }
-
         fire(0.25, { spread: 26, startVelocity: 55 });
         fire(0.2, { spread: 60 });
         fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-        fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-        fire(0.1, { spread: 120, startVelocity: 45 });
       }
+
+      // Bridge para o HTML (onClick)
+      function setupButtons() {
+        document.getElementById("btn-water-250").onclick = () =>
+          window.handleWater(250);
+        document.getElementById("btn-water-500").onclick = () =>
+          window.handleWater(500);
+        document.getElementById("btn-water-1000").onclick = () =>
+          window.handleWater(1000);
+        document.getElementById("btn-water-reset").onclick = () =>
+          window.handleWater(0);
+      }
+
+      // START
+      init();
     </script>
   </body>
 </html>
