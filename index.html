@@ -135,9 +135,11 @@
           <div
             onclick="editWeight()"
             id="profile-summary"
-            class="group cursor-pointer flex items-center gap-2 text-xs text-brand-600 font-medium mt-1 opacity-0 transition-opacity duration-500 hover:text-brand-800 bg-brand-50 w-fit px-2 py-1 rounded-lg border border-brand-100"
+            class="group cursor-pointer flex items-center gap-2 text-xs text-brand-600 font-medium mt-1 opacity-0 transition-opacity duration-500 hover:text-brand-800 bg-brand-50 w-fit px-2 py-1 rounded-lg border border-brand-100 select-none"
           >
-            <span id="profile-text">--</span>
+            <span id="profile-text" class="transition-all duration-300"
+              >--</span
+            >
             <i
               class="fas fa-pen text-[10px] opacity-50 group-hover:opacity-100"
             ></i>
@@ -776,6 +778,17 @@
           async (docSnap) => {
             if (docSnap.exists()) {
               currentPlan = docSnap.data();
+
+              // Visual feedback: Flash green on update
+              const profileEl = document.getElementById("profile-text");
+              if (profileEl) {
+                profileEl.classList.add("text-emerald-500", "font-bold");
+                setTimeout(
+                  () =>
+                    profileEl.classList.remove("text-emerald-500", "font-bold"),
+                  800
+                );
+              }
             } else {
               await setDoc(docRef, DEFAULT_PLAN, { merge: true });
               currentPlan = { ...DEFAULT_PLAN };
