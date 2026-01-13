@@ -127,7 +127,8 @@
         <!-- Auth Status Indicator -->
         <div
           id="auth-status"
-          class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold shadow-sm transition-colors duration-500"
+          class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold shadow-sm transition-colors duration-500 cursor-help"
+          title="Status da Conexão"
         >
           <i class="fas fa-sync fa-spin text-xs"></i>
         </div>
@@ -178,7 +179,7 @@
           </svg>
           <div class="text-center mt-2">
             <span id="val-p" class="block text-sm font-bold text-slate-700"
-              >175g</span
+              >--</span
             >
             <span
               id="label-p"
@@ -229,7 +230,7 @@
           </svg>
           <div class="text-center mt-2">
             <span id="val-c" class="block text-sm font-bold text-slate-700"
-              >215g</span
+              >--</span
             >
             <span
               id="label-c"
@@ -280,7 +281,7 @@
           </svg>
           <div class="text-center mt-2">
             <span id="val-f" class="block text-sm font-bold text-slate-700"
-              >75g</span
+              >--</span
             >
             <span
               id="label-f"
@@ -404,98 +405,109 @@
         collection,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-      // --- CONSTANTES DE DADOS ---
-      const TOTAL_MACROS = { p: 175, c: 215, f: 75 };
-      const GOAL_WATER = 4000;
-
-      const mealsData = [
-        {
-          id: 1,
-          time: "07:30",
-          title: "Café da Manhã",
-          calories: "Cuscuz + Ovos",
-          icon: "fa-mug-hot",
-          color: "text-amber-500",
-          bg: "bg-amber-50",
-          macros: { p: 32, c: 45, f: 22 },
-          items: [
-            "150g Cuscuz de Milho",
-            "4 Ovos Mexidos",
-            "Café preto (sem açúcar)",
-          ],
-        },
-        {
-          id: 2,
-          time: "12:30",
-          title: "Almoço",
-          calories: "Sólido",
-          icon: "fa-bowl-food",
-          color: "text-emerald-500",
-          bg: "bg-emerald-50",
-          macros: { p: 48, c: 60, f: 18 },
-          items: [
-            "150g Frango/Patinho",
-            "150g Arroz",
-            "100g Feijão",
-            "Salada + Azeite",
-          ],
-        },
-        {
-          id: 3,
-          time: "16:30",
-          title: "Pré-Treino",
-          calories: "Energia",
-          icon: "fa-bolt",
-          color: "text-yellow-500",
-          bg: "bg-yellow-50",
-          macros: { p: 25, c: 50, f: 15 },
-          items: [
-            "2 fatias Pão Integral",
-            "2 Ovos ou 80g Frango",
-            "1 Maçã/Melão",
-          ],
-        },
-        {
-          id: 4,
-          time: "19:00",
-          title: "Pós-Treino",
-          calories: "Recuperação",
-          icon: "fa-glass-water",
-          color: "text-blue-500",
-          bg: "bg-blue-50",
-          macros: { p: 25, c: 25, f: 1 },
-          items: ["30g Whey Protein", "250ml Água Gelada", "1 Banana"],
-        },
-        {
-          id: 5,
-          time: "20:30",
-          title: "Jantar",
-          calories: "Leve",
-          icon: "fa-moon",
-          color: "text-indigo-500",
-          bg: "bg-indigo-50",
-          macros: { p: 45, c: 35, f: 19 },
-          items: [
-            "150g Peixe/Frango",
-            "200g Batata/Mandioca",
-            "Legumes cozidos",
-            "Azeite",
-          ],
-        },
-      ];
+      // --- DADOS PADRÃO (FALLBACK / INICIAL) ---
+      const DEFAULT_PLAN = {
+        macros: { p: 175, c: 215, f: 75 },
+        goalWater: 4000,
+        meals: [
+          {
+            id: 1,
+            time: "07:30",
+            title: "Café da Manhã",
+            calories: "Cuscuz + Ovos",
+            icon: "fa-mug-hot",
+            color: "text-amber-500",
+            bg: "bg-amber-50",
+            macros: { p: 32, c: 45, f: 22 },
+            items: [
+              "150g Cuscuz de Milho",
+              "4 Ovos Mexidos",
+              "Café preto (sem açúcar)",
+            ],
+          },
+          {
+            id: 2,
+            time: "12:30",
+            title: "Almoço",
+            calories: "Sólido",
+            icon: "fa-bowl-food",
+            color: "text-emerald-500",
+            bg: "bg-emerald-50",
+            macros: { p: 48, c: 60, f: 18 },
+            items: [
+              "150g Frango/Patinho",
+              "150g Arroz",
+              "100g Feijão",
+              "Salada + Azeite",
+            ],
+          },
+          {
+            id: 3,
+            time: "16:30",
+            title: "Pré-Treino",
+            calories: "Energia",
+            icon: "fa-bolt",
+            color: "text-yellow-500",
+            bg: "bg-yellow-50",
+            macros: { p: 25, c: 50, f: 15 },
+            items: [
+              "2 fatias Pão Integral",
+              "2 Ovos ou 80g Frango",
+              "1 Maçã/Melão",
+            ],
+          },
+          {
+            id: 4,
+            time: "19:00",
+            title: "Pós-Treino",
+            calories: "Recuperação",
+            icon: "fa-glass-water",
+            color: "text-blue-500",
+            bg: "bg-blue-50",
+            macros: { p: 25, c: 25, f: 1 },
+            items: ["30g Whey Protein", "250ml Água Gelada", "1 Banana"],
+          },
+          {
+            id: 5,
+            time: "20:30",
+            title: "Jantar",
+            calories: "Leve",
+            icon: "fa-moon",
+            color: "text-indigo-500",
+            bg: "bg-indigo-50",
+            macros: { p: 45, c: 35, f: 19 },
+            items: [
+              "150g Peixe/Frango",
+              "200g Batata/Mandioca",
+              "Legumes cozidos",
+              "Azeite",
+            ],
+          },
+        ],
+      };
 
       // --- FIREBASE SETUP ---
-      const firebaseConfig = JSON.parse(__firebase_config);
+      const firebaseConfig = {
+        apiKey: "AIzaSyAO0_OgxgloGQXN-bdCkiWyxlGvKI3f-fU",
+        authDomain: "app-dieta-8cd8d.firebaseapp.com",
+        projectId: "app-dieta-8cd8d",
+        storageBucket: "app-dieta-8cd8d.firebasestorage.app",
+        messagingSenderId: "213080108189",
+        appId: "1:213080108189:web:6efbeef452753cf4a53874",
+      };
+
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
-      const appId =
-        typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+      // Usando o ID do seu projeto como identificador
+      const appId = "app-dieta-8cd8d";
 
       let currentUser = null;
-      let todayKey = ""; // Será setado no init
+      let todayKey = "";
+      let useLocalStorage = false; // Flag para modo offline
 
-      // Estado local (sincronizado com DB)
+      // Estado Global da Aplicação
+      let currentPlan = { ...DEFAULT_PLAN }; // Inicia com o padrão
       let appState = {
         water: 0,
         checkedMeals: [],
@@ -506,32 +518,45 @@
       async function init() {
         renderDate();
 
-        // Autenticação
+        // Autenticação com Fallback
         try {
-          if (
-            typeof __initial_auth_token !== "undefined" &&
-            __initial_auth_token
-          ) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-          } else {
-            await signInAnonymously(auth);
-          }
+          // Tenta login anônimo
+          await signInAnonymously(auth);
         } catch (error) {
-          console.error("Auth Error:", error);
+          console.warn("Firebase Auth Error:", error.code);
+
+          // Se o erro for de operação restrita, significa que a Auth Anônima está desativada no console
+          if (error.code === "auth/admin-restricted-operation") {
+            // Não vamos usar alert() para não bloquear, apenas log e modo offline
+            console.log(
+              "Modo Offline ativado: Ative 'Anonymous Auth' no console do Firebase para sincronizar."
+            );
+            updateAuthStatus("offline-config");
+          } else {
+            updateAuthStatus("offline");
+          }
+
+          // Ativa modo offline
+          useLocalStorage = true;
+          startOfflineMode();
         }
 
-        // Observar estado da auth
+        // Observar estado da auth (só dispara se o login funcionar)
         onAuthStateChanged(auth, (user) => {
           if (user) {
+            console.log("Conectado ao Firebase:", user.uid);
             currentUser = user;
+            useLocalStorage = false;
             updateAuthStatus("connected");
-            subscribeToData();
+            startFirestoreListeners();
           } else {
-            updateAuthStatus("disconnected");
+            // Se não tiver user e não estivermos já em modo offline forçado
+            if (!useLocalStorage) {
+              // Pode acontecer no logout ou inicialização
+            }
           }
         });
 
-        // Configurar botões (agora que o module carregou)
         setupButtons();
       }
 
@@ -539,20 +564,122 @@
         const indicator = document.getElementById("auth-status");
         if (status === "connected") {
           indicator.innerHTML = '<i class="fas fa-cloud text-xs"></i>';
-          indicator.classList.remove("bg-slate-100", "text-slate-400");
+          indicator.classList.remove(
+            "bg-slate-100",
+            "text-slate-400",
+            "bg-red-100",
+            "text-red-500",
+            "bg-yellow-100",
+            "text-yellow-600"
+          );
           indicator.classList.add("bg-emerald-100", "text-emerald-600");
+          indicator.title = "Online: Sincronizado";
+        } else if (status === "offline-config") {
+          indicator.innerHTML =
+            '<i class="fas fa-exclamation-triangle text-xs"></i>';
+          indicator.classList.remove(
+            "bg-slate-100",
+            "text-slate-400",
+            "bg-emerald-100",
+            "text-emerald-600"
+          );
+          indicator.classList.add("bg-yellow-100", "text-yellow-600");
+          indicator.title = "Offline: Ative Auth Anônima no Firebase";
+          // Mostra um aviso amigável na tela (Toast)
+          showToast(
+            "Modo Offline: Ative 'Anonymous Auth' no Firebase para sincronizar."
+          );
         } else {
           indicator.innerHTML = '<i class="fas fa-wifi-slash text-xs"></i>';
+          indicator.classList.remove(
+            "bg-emerald-100",
+            "text-emerald-600",
+            "bg-yellow-100",
+            "text-yellow-600"
+          );
           indicator.classList.add("bg-slate-100", "text-slate-400");
-          indicator.classList.remove("bg-emerald-100", "text-emerald-600");
+          indicator.title = "Offline";
         }
       }
 
-      // --- DATA LAYER (FIRESTORE) ---
-      function subscribeToData() {
-        if (!currentUser) return;
+      function showToast(message) {
+        const toast = document.createElement("div");
+        toast.className =
+          "fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-lg z-50 animate-bounce";
+        toast.innerText = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
+      }
 
-        // Caminho: artifacts/{appId}/users/{uid}/daily_stats/{todayKey}
+      // --- MODO OFFLINE (LOCAL STORAGE) ---
+      function startOfflineMode() {
+        enableControls();
+
+        // 1. Carregar Plano
+        const savedPlan = localStorage.getItem("diet_plan_config");
+        if (savedPlan) {
+          currentPlan = JSON.parse(savedPlan);
+        } else {
+          currentPlan = { ...DEFAULT_PLAN };
+          localStorage.setItem("diet_plan_config", JSON.stringify(currentPlan));
+        }
+
+        // 2. Carregar Stats Diários
+        const savedStats = localStorage.getItem(`daily_stats_${todayKey}`);
+        if (savedStats) {
+          appState = JSON.parse(savedStats);
+        } else {
+          appState = { water: 0, checkedMeals: [], date: todayKey };
+        }
+
+        // Renderizar
+        renderMeals();
+        updateMacrosUI();
+        updateWaterUI();
+      }
+
+      // --- MODO ONLINE (FIRESTORE) ---
+      function startFirestoreListeners() {
+        subscribeToPlan();
+        subscribeToDailyStats();
+      }
+
+      // --- DATA LAYER 1: CONFIGURAÇÃO DO PLANO ---
+      function subscribeToPlan() {
+        if (!currentUser) return;
+        const docRef = doc(
+          db,
+          "artifacts",
+          appId,
+          "users",
+          currentUser.uid,
+          "config",
+          "diet_plan"
+        );
+
+        onSnapshot(
+          docRef,
+          async (docSnap) => {
+            if (docSnap.exists()) {
+              currentPlan = docSnap.data();
+            } else {
+              await setDoc(docRef, DEFAULT_PLAN, { merge: true });
+              currentPlan = { ...DEFAULT_PLAN };
+            }
+
+            renderMeals();
+            updateMacrosUI();
+            updateWaterUI();
+          },
+          (error) => {
+            console.error("Erro plano:", error);
+          }
+        );
+      }
+
+      // --- DATA LAYER 2: ESTADO DIÁRIO ---
+      function subscribeToDailyStats() {
+        if (!currentUser) return;
         const docRef = doc(
           db,
           "artifacts",
@@ -563,7 +690,6 @@
           todayKey
         );
 
-        // Listener em tempo real
         onSnapshot(
           docRef,
           (docSnap) => {
@@ -572,41 +698,55 @@
             if (docSnap.exists()) {
               appState = docSnap.data();
             } else {
-              // Documento não existe (dia novo ou primeiro acesso)
               appState = {
                 water: 0,
                 checkedMeals: [],
                 date: todayKey,
               };
-              // Cria o documento inicial no DB
-              saveData();
+              saveDailyData();
             }
 
-            // Atualiza toda a UI com os novos dados
             updateWaterUI();
             renderMeals();
             updateMacrosUI();
           },
           (error) => {
-            console.error("Erro ao sincronizar dados:", error);
+            console.error("Erro dados diários:", error);
           }
         );
       }
 
-      async function saveData() {
-        if (!currentUser) return;
-        const docRef = doc(
-          db,
-          "artifacts",
-          appId,
-          "users",
-          currentUser.uid,
-          "daily_stats",
-          todayKey
-        );
+      // --- FUNÇÃO DE SALVAR UNIFICADA (ONLINE/OFFLINE) ---
+      async function saveDailyData() {
+        if (useLocalStorage || !currentUser) {
+          // Salvar no LocalStorage
+          localStorage.setItem(
+            `daily_stats_${todayKey}`,
+            JSON.stringify(appState)
+          );
+          return;
+        }
 
-        // Usando setDoc com merge para segurança, mas sobrescrevendo estado local
-        await setDoc(docRef, appState, { merge: true });
+        // Salvar no Firestore
+        try {
+          const docRef = doc(
+            db,
+            "artifacts",
+            appId,
+            "users",
+            currentUser.uid,
+            "daily_stats",
+            todayKey
+          );
+          await setDoc(docRef, appState, { merge: true });
+        } catch (e) {
+          console.error("Erro ao salvar:", e);
+          // Fallback silencioso se perder conexão momentaneamente
+          localStorage.setItem(
+            `daily_stats_${todayKey}`,
+            JSON.stringify(appState)
+          );
+        }
       }
 
       // --- LÓGICA DE UI ---
@@ -615,13 +755,10 @@
         const dateObj = new Date();
         const dateStr = dateObj.toLocaleDateString("pt-BR", options);
         document.getElementById("current-date").innerText = dateStr;
-
-        // Key para o DB (ex: "Tue Oct 27 2023" - sem acentos, simples)
         todayKey = dateObj.toDateString();
       }
 
       function enableControls() {
-        // Habilita botões que começam desabilitados
         const buttons = document.querySelectorAll("button");
         buttons.forEach((btn) => {
           btn.classList.remove("opacity-50", "cursor-not-allowed");
@@ -634,34 +771,37 @@
         if (amount === 0) {
           if (confirm("Zerar contador de água?")) {
             appState.water = 0;
-            saveData();
+            saveDailyData();
+            updateWaterUI(); // Force update para modo offline
           }
         } else {
+          const maxWater = currentPlan.goalWater + 1000;
           appState.water += amount;
-          if (appState.water > GOAL_WATER + 1000)
-            appState.water = GOAL_WATER + 1000;
+          if (appState.water > maxWater) appState.water = maxWater;
 
           if (
-            appState.water >= GOAL_WATER &&
-            appState.water - amount < GOAL_WATER
+            appState.water >= currentPlan.goalWater &&
+            appState.water - amount < currentPlan.goalWater
           ) {
             triggerConfetti();
           }
-          saveData();
+          saveDailyData();
+          updateWaterUI(); // Force update para modo offline
         }
       };
 
       function updateWaterUI() {
         const display = document.getElementById("water-display");
         const bar = document.getElementById("water-bar");
+        const goal = currentPlan.goalWater || 4000; // Fallback
 
         display.innerText = appState.water;
 
-        const percentage = Math.min((appState.water / GOAL_WATER) * 100, 100);
+        const percentage = Math.min((appState.water / goal) * 100, 100);
         bar.style.height = "100%";
         bar.style.width = `${percentage}%`;
 
-        if (appState.water >= GOAL_WATER) {
+        if (appState.water >= goal) {
           bar.classList.remove("liquid-bg");
           bar.classList.add("bg-emerald-500");
         } else {
@@ -680,15 +820,14 @@
           appState.checkedMeals.push(id);
           if (navigator.vibrate) navigator.vibrate(50);
 
-          if (appState.checkedMeals.length === mealsData.length) {
+          if (appState.checkedMeals.length === currentPlan.meals.length) {
             triggerConfetti();
           }
         }
-        saveData();
-        // A UI atualiza automaticamente pelo onSnapshot,
-        // mas podemos forçar para resposta instantânea
-        // renderMeals();
-        // updateMacrosUI();
+        saveDailyData();
+        // Force updates para modo offline
+        renderMeals();
+        updateMacrosUI();
       };
 
       function renderMeals() {
@@ -696,7 +835,7 @@
         container.innerHTML = "";
         let completedCount = 0;
 
-        mealsData.forEach((meal) => {
+        currentPlan.meals.forEach((meal) => {
           const isChecked = appState.checkedMeals.includes(meal.id);
           if (isChecked) completedCount++;
 
@@ -775,7 +914,7 @@
         let consumed = { p: 0, c: 0, f: 0 };
 
         appState.checkedMeals.forEach((mealId) => {
-          const meal = mealsData.find((m) => m.id === mealId);
+          const meal = currentPlan.meals.find((m) => m.id === mealId);
           if (meal) {
             consumed.p += meal.macros.p;
             consumed.c += meal.macros.c;
@@ -783,15 +922,16 @@
           }
         });
 
+        const total = currentPlan.macros;
         const remaining = {
-          p: TOTAL_MACROS.p - consumed.p,
-          c: TOTAL_MACROS.c - consumed.c,
-          f: TOTAL_MACROS.f - consumed.f,
+          p: total.p - consumed.p,
+          c: total.c - consumed.c,
+          f: total.f - consumed.f,
         };
 
-        updateSingleMacro("p", remaining.p, TOTAL_MACROS.p);
-        updateSingleMacro("c", remaining.c, TOTAL_MACROS.c);
-        updateSingleMacro("f", remaining.f, TOTAL_MACROS.f);
+        updateSingleMacro("p", remaining.p, total.p);
+        updateSingleMacro("c", remaining.c, total.c);
+        updateSingleMacro("f", remaining.f, total.f);
       }
 
       function updateSingleMacro(type, remainingVal, totalVal) {
@@ -831,7 +971,7 @@
 
           const circumference = 263.8;
           const percentRemaining = remainingVal / totalVal;
-          const percentConsumed = 1 - percentRemaining;
+          const percentConsumed = 1 - Math.max(0, percentRemaining);
           const offset = circumference - percentConsumed * circumference;
 
           elRing.style.strokeDashoffset = offset;
@@ -870,7 +1010,6 @@
         fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
       }
 
-      // Bridge para o HTML (onClick)
       function setupButtons() {
         document.getElementById("btn-water-250").onclick = () =>
           window.handleWater(250);
