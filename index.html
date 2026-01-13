@@ -130,14 +130,20 @@
           >
             Hoje
           </h1>
-          <!-- Perfil (Carregado do Firebase) -->
+
+          <!-- Perfil (Clicável para editar) -->
           <div
+            onclick="editWeight()"
             id="profile-summary"
-            class="text-xs text-brand-600 font-medium mt-0.5 opacity-0 transition-opacity duration-500"
+            class="group cursor-pointer flex items-center gap-2 text-xs text-brand-600 font-medium mt-1 opacity-0 transition-opacity duration-500 hover:text-brand-800 bg-brand-50 w-fit px-2 py-1 rounded-lg border border-brand-100"
           >
-            <!-- Será preenchido via JS ex: 84.7kg • Recomposição -->
+            <span id="profile-text">--</span>
+            <i
+              class="fas fa-pen text-[10px] opacity-50 group-hover:opacity-100"
+            ></i>
           </div>
         </div>
+
         <!-- Auth Status Indicator -->
         <div
           id="auth-status"
@@ -317,7 +323,7 @@
                 Hidratação
               </h2>
               <p class="text-xs text-slate-400 font-medium mt-1">
-                Meta diária: 4000ml
+                Meta diária: <span id="water-goal-display">4000</span>ml
               </p>
             </div>
             <div class="text-right">
@@ -587,6 +593,9 @@
         });
 
         setupButtons();
+
+        // Expor função globalmente para o HTML acessar
+        window.editWeight = editWeight;
       }
 
       function updateAuthStatus(status) {
@@ -638,6 +647,81 @@
         toast.innerText = message;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 5000);
+      }
+
+      // --- LÓGICA DE ATUALIZAÇÃO DE PESO E MACROS ---
+      async function editWeight() {
+        // Pega o peso atual (remove 'kg' se tiver)
+        const currentWeightStr = currentPlan.profile.weight.replace(
+          /[^0-9.]/g,
+          ""
+        );
+        const newWeightInput = prompt(
+          "Digite seu novo peso (kg):",
+          currentWeightStr
+        );
+
+        if (newWeightInput) {
+          // Converte vírgula para ponto e analisa
+          const newWeight = parseFloat(newWeightInput.replace(",", "."));
+
+          if (!isNaN(newWeight) && newWeight > 30 && newWeight < 300) {
+            await updateProfileAndMacros(newWeight);
+            showToast(`Metas recalculadas para ${newWeight}kg!`);
+          } else {
+            alert("Peso inválido. Digite um número ex: 85.5");
+          }
+        }
+      }
+
+      async function updateProfileAndMacros(weight) {
+        // 1. Atualiza Perfil
+        currentPlan.profile.weight = `${weight}kg`;
+
+        // 2. Recalcula Macros (Baseado em Recomposição: P=2.1, C=2.5, F=0.9)
+        currentPlan.macros = {
+          p: Math.round(weight * 2.1),
+          c: Math.round(weight * 2.5),
+          f: Math.round(weight * 0.9),
+        };
+
+        // 3. Recalcula Água (Aprox 47ml/kg para atletas/ativos)
+        const newWaterGoal = Math.round(weight * 47);
+        // Arredonda para o 100 mais próximo para ficar bonito (ex: 3980 -> 4000)
+        currentPlan.goalWater = Math.ceil(newWaterGoal / 100) * 100;
+
+        // 4. Salva (Online ou Offline)
+        if (useLocalStorage || !currentUser) {
+          localStorage.setItem("diet_plan_config", JSON.stringify(currentPlan));
+          // Atualiza UI manualmente
+          renderProfile();
+          updateMacrosUI();
+          updateWaterUI();
+        } else {
+          try {
+            const docRef = doc(
+              db,
+              "artifacts",
+              appId,
+              "users",
+              currentUser.uid,
+              "config",
+              "diet_plan"
+            );
+            await setDoc(docRef, currentPlan, { merge: true });
+            // O onSnapshot cuidará da atualização da UI
+          } catch (e) {
+            console.error("Erro ao salvar perfil:", e);
+            // Fallback
+            localStorage.setItem(
+              "diet_plan_config",
+              JSON.stringify(currentPlan)
+            );
+            renderProfile();
+            updateMacrosUI();
+            updateWaterUI();
+          }
+        }
       }
 
       // --- MODO OFFLINE (LOCAL STORAGE) ---
@@ -818,10 +902,12 @@
       }
 
       function renderProfile() {
-        const el = document.getElementById("profile-summary");
-        if (currentPlan && currentPlan.profile && el) {
-          el.innerHTML = `${currentPlan.profile.weight} &bull; ${currentPlan.profile.goal}`;
-          el.classList.remove("opacity-0");
+        const elText = document.getElementById("profile-text");
+        const elContainer = document.getElementById("profile-summary");
+
+        if (currentPlan && currentPlan.profile && elText) {
+          elText.innerHTML = `${currentPlan.profile.weight} &bull; ${currentPlan.profile.goal}`;
+          elContainer.classList.remove("opacity-0");
         }
       }
 
@@ -859,8 +945,12 @@
 
       function updateWaterUI() {
         const display = document.getElementById("water-display");
+        const goalDisplay = document.getElementById("water-goal-display");
         const bar = document.getElementById("water-bar");
         const goal = currentPlan.goalWater || 4000; // Fallback
+
+        // Atualiza display da meta
+        if (goalDisplay) goalDisplay.innerText = goal;
 
         display.innerText = appState.water;
 
