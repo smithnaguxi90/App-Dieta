@@ -417,6 +417,17 @@
           </div>
         </div>
       </section>
+
+      <!-- Botão para Forçar Importação do Plano Padrão -->
+      <div class="pt-8 pb-4 text-center">
+        <button
+          onclick="importDefaultPlan()"
+          class="text-xs text-slate-400 hover:text-brand-600 underline transition-colors"
+        >
+          <i class="fas fa-database mr-1"></i> Restaurar Plano Original para o
+          Firebase
+        </button>
+      </div>
     </main>
 
     <!-- FIREBASE MODULE -->
@@ -598,6 +609,54 @@
 
         // Expor função globalmente para o HTML acessar
         window.editWeight = editWeight;
+        window.importDefaultPlan = importDefaultPlan;
+      }
+
+      // --- FUNÇÃO DE IMPORTAÇÃO MANUAL ---
+      async function importDefaultPlan() {
+        if (useLocalStorage || !currentUser) {
+          if (
+            confirm(
+              "Você está offline. Deseja resetar os dados locais para o padrão?"
+            )
+          ) {
+            localStorage.setItem(
+              "diet_plan_config",
+              JSON.stringify(DEFAULT_PLAN)
+            );
+            currentPlan = { ...DEFAULT_PLAN };
+            renderProfile();
+            renderMeals();
+            updateMacrosUI();
+            updateWaterUI();
+            alert("Dados locais resetados!");
+          }
+          return;
+        }
+
+        if (
+          confirm(
+            "ATENÇÃO: Isso irá sobrescrever seu plano atual no Firebase com o cardápio padrão original. Suas refeições de hoje serão mantidas, mas as metas e itens do menu serão resetados. Continuar?"
+          )
+        ) {
+          try {
+            const docRef = doc(
+              db,
+              "artifacts",
+              appId,
+              "users",
+              currentUser.uid,
+              "config",
+              "diet_plan"
+            );
+            await setDoc(docRef, DEFAULT_PLAN); // Sobrescreve
+            alert("Plano padrão importado para o Firebase com sucesso!");
+            // O onSnapshot vai atualizar a tela automaticamente
+          } catch (e) {
+            console.error("Erro ao importar:", e);
+            alert("Erro ao importar plano. Verifique o console.");
+          }
+        }
       }
 
       function updateAuthStatus(status) {
