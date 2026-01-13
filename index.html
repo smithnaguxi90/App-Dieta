@@ -116,13 +116,27 @@
     >
       <div class="max-w-md mx-auto px-6 py-4 flex justify-between items-center">
         <div>
+          <!-- O JavaScript irá substituir este texto automaticamente pela data de hoje -->
           <p
-            class="text-xs font-semibold text-slate-400 uppercase tracking-wider"
+            class="text-xs font-semibold text-slate-400 tracking-wider"
             id="current-date"
           >
             CARREGANDO...
           </p>
-          <h1 class="text-xl font-display font-bold text-slate-800">Hoje</h1>
+          <!-- Adicionado ID para atualização via JS -->
+          <h1
+            class="text-xl font-display font-bold text-slate-800"
+            id="current-weekday"
+          >
+            Hoje
+          </h1>
+          <!-- Perfil (Carregado do Firebase) -->
+          <div
+            id="profile-summary"
+            class="text-xs text-brand-600 font-medium mt-0.5 opacity-0 transition-opacity duration-500"
+          >
+            <!-- Será preenchido via JS ex: 84.7kg • Recomposição -->
+          </div>
         </div>
         <!-- Auth Status Indicator -->
         <div
@@ -327,7 +341,8 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-4 gap-2">
+          <!-- Alterado de grid-cols-4 para grid-cols-5 para caber o novo botão -->
+          <div class="grid grid-cols-5 gap-2">
             <button
               id="btn-water-250"
               class="col-span-1 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-sm hover:bg-blue-100 active:scale-95 transition flex flex-col items-center gap-1 opacity-50 cursor-not-allowed"
@@ -340,6 +355,15 @@
             >
               <i class="fas fa-bottle-water text-xs"></i> 500
             </button>
+
+            <!-- Novo Botão de 750ml -->
+            <button
+              id="btn-water-750"
+              class="col-span-1 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-sm hover:bg-blue-100 active:scale-95 transition flex flex-col items-center gap-1 opacity-50 cursor-not-allowed"
+            >
+              <i class="fas fa-bottle-water text-xs"></i> 750
+            </button>
+
             <button
               id="btn-water-1000"
               class="col-span-1 py-3 rounded-xl bg-blue-50 text-blue-600 font-bold text-sm hover:bg-blue-100 active:scale-95 transition flex flex-col items-center gap-1 opacity-50 cursor-not-allowed"
@@ -405,8 +429,14 @@
         collection,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-      // --- DADOS PADRÃO (FALLBACK / INICIAL) ---
+      // --- DADOS PADRÃO COMPLETO (PERFIL + DIETA) ---
       const DEFAULT_PLAN = {
+        profile: {
+          weight: "84.7kg",
+          height: "1.76m",
+          goal: "Recomposição Corporal",
+          trainingFreq: "5x/semana",
+        },
         macros: { p: 175, c: 215, f: 75 },
         goalWater: 4000,
         meals: [
@@ -499,7 +529,6 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
-      // Usando o ID do seu projeto como identificador
       const appId = "app-dieta-8cd8d";
 
       let currentUser = null;
@@ -636,6 +665,7 @@
         renderMeals();
         updateMacrosUI();
         updateWaterUI();
+        renderProfile(); // Renderiza perfil
       }
 
       // --- MODO ONLINE (FIRESTORE) ---
@@ -670,6 +700,7 @@
             renderMeals();
             updateMacrosUI();
             updateWaterUI();
+            renderProfile(); // Renderiza perfil vindo do DB
           },
           (error) => {
             console.error("Erro plano:", error);
@@ -751,11 +782,47 @@
 
       // --- LÓGICA DE UI ---
       function renderDate() {
-        const options = { weekday: "long", day: "numeric", month: "long" };
         const dateObj = new Date();
-        const dateStr = dateObj.toLocaleDateString("pt-BR", options);
-        document.getElementById("current-date").innerText = dateStr;
-        todayKey = dateObj.toDateString();
+
+        // --- 1. DATA COMPLETA (Subtítulo) ---
+        const optionsDate = { day: "numeric", month: "long", year: "numeric" };
+        let dateStr = dateObj.toLocaleDateString("pt-BR", optionsDate);
+
+        // Ajuste visual: Transforma " de janeiro" em " de Janeiro"
+        dateStr = dateStr.replace(
+          / de ([a-z])/g,
+          (match, letter) => ` de ${letter.toUpperCase()}`
+        );
+        document.getElementById(
+          "current-date"
+        ).innerText = `Brasília, ${dateStr}`;
+
+        // --- 2. DIA DA SEMANA (Título Principal) ---
+        const optionsWeekday = { weekday: "long" };
+        let weekdayStr = dateObj.toLocaleDateString("pt-BR", optionsWeekday);
+
+        // Capitalizar a primeira letra
+        weekdayStr = weekdayStr.charAt(0).toUpperCase() + weekdayStr.slice(1);
+
+        const weekdayEl = document.getElementById("current-weekday");
+        if (weekdayEl) weekdayEl.innerText = weekdayStr;
+
+        // --- Lógica de Virada de Dia (Meia-noite) ---
+        const newKey = dateObj.toDateString();
+
+        if (todayKey && todayKey !== newKey) {
+          window.location.reload();
+        } else {
+          todayKey = newKey;
+        }
+      }
+
+      function renderProfile() {
+        const el = document.getElementById("profile-summary");
+        if (currentPlan && currentPlan.profile && el) {
+          el.innerHTML = `${currentPlan.profile.weight} &bull; ${currentPlan.profile.goal}`;
+          el.classList.remove("opacity-0");
+        }
       }
 
       function enableControls() {
@@ -940,6 +1007,9 @@
         const elRing = document.getElementById(`ring-${type}`);
         const elIcon = document.getElementById(`icon-${type}`);
 
+        // Safety check
+        if (!elVal || !elLabel || !elRing || !elIcon) return;
+
         const displayVal = remainingVal <= 0 ? 0 : remainingVal;
         elVal.innerText = `${displayVal}g`;
 
@@ -1015,6 +1085,8 @@
           window.handleWater(250);
         document.getElementById("btn-water-500").onclick = () =>
           window.handleWater(500);
+        document.getElementById("btn-water-750").onclick = () =>
+          window.handleWater(750); // Novo Handler
         document.getElementById("btn-water-1000").onclick = () =>
           window.handleWater(1000);
         document.getElementById("btn-water-reset").onclick = () =>
@@ -1023,6 +1095,9 @@
 
       // START
       init();
+
+      // Verifica a data a cada minuto para atualizar automaticamente na virada do dia
+      setInterval(renderDate, 60000);
     </script>
   </body>
 </html>
